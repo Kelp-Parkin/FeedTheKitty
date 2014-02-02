@@ -1,0 +1,35 @@
+def takePicture():
+        subprocess.call(['/home/pi/takePicture'])
+
+def sendEmail(to, subject, text, files=[]):
+        assert type(to)==list
+        assert type(files)==list
+
+        msg = MIMEMultipart()
+        msg['From'] = USERNAME
+        msg['To'] = COMMASPACE.join(to)
+        msg['Date'] = formatdate(localtime=True)
+        msg['Subject'] = subject
+
+        msg.attach( MIMEText(text) )
+
+        for file in files:
+                part = MIMEBase('application', "octet-stream")
+                part.set_payload(open(file, "rb").read() )
+                Encoders.encode_base64(part)
+                part.add_header('Content-Disposition', 'attachment; filename="%s"'% o$
+                msg.attach(part)
+
+                server = smtplib.SMTP('smtp.gmail.com:587')
+                server.ehlo_or_helo_if_needed()
+                server.starttls()
+                server.ehlo_or_helo_if_needed()
+                server.login(USERNAME,PASSWORD)
+                server.sendmail(USERNAME, MAILTO, msg.as_string())
+                server.quit()
+               
+takePicture()
+sendEmail( ["kelp_parkin@me.com"],
+	"Cat Feeder Message",
+	"The Kitties have been fed.",
+	["/home/pi/Images/" +  str(commands.getoutput("/home/pi/currentPicture"))] )
